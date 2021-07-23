@@ -1,0 +1,16 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t mictat/multi-docker-test -f ./client/Dockerfile.dev .
+
+script:
+  - docker run -e CI=true mictat/multi-docker-test npm test -- --coverage
+
+after_success:
+  - docker build -t mictat/multi-client -f ./client
+  - docker build -t mictat/multi-nginx -f ./nginx
+  - docker build -t mictat/multi-server -f ./server
+  - docker build -t mictat/multi-worker -f ./worker
